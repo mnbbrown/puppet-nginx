@@ -34,21 +34,32 @@ define nginx::resource::vhost(
   $ensure           = 'enable',
   $listen_ip        = '*',
   $listen_port      = '80',
+
   $ipv6_enable      = false,
   $ipv6_listen_ip   = '::',
   $ipv6_listen_port = '80',
+
   $ssl              = false,
   $ssl_cert         = undef,
   $ssl_key          = undef,
+
   $proxy            = undef,
+
   $index_files      = ['index.html', 'index.htm', 'index.php'],
-  $www_root         = undef
+  $www_root         = "/srv/www/${name}"
 ) {
 
   File {
     owner => 'root',
     group => 'root',
     mode  => '0644',
+  }
+
+  file { $www_root:
+    ensure => directory,
+    group => 'root',
+    owner => 'root',
+    mode => 0644
   }
 
   # Add IPv6 Logic Check - Nginx service will not start if ipv6 is enabled
@@ -75,17 +86,6 @@ define nginx::resource::vhost(
     notify => Class['nginx::service'],
   }
 
-  # Create the default location reference for the vHost
-  nginx::resource::location {"${name}-default":
-    ensure   => $ensure,
-    vhost    => $name,
-    ssl      => $ssl,
-    location => '/',
-    proxy    => $proxy,
-    www_root => $www_root,
-    notify   => Class['nginx::service'],
-  }
-
   # Create a proper file close stub.
   file { "${nginx::config::nx_temp_dir}/nginx.d/${name}-699":
     ensure  => $ensure ? {
@@ -98,6 +98,7 @@ define nginx::resource::vhost(
 
   # Create SSL File Stubs if SSL is enabled
   if ($ssl == 'true') {
+
     file { "${nginx::config::nx_temp_dir}/nginx.d/${name}-700-ssl":
       ensure => $ensure ? {
 	'absent' => absent,
@@ -106,13 +107,15 @@ define nginx::resource::vhost(
       content => template('nginx/vhost/vhost_ssl_header.erb'),
       notify => Class['nginx::service'],
     }
+
     file { "${nginx::config::nx_temp_dir}/nginx.d/${name}-999-ssl":
       ensure => $ensure ? {
         'absent' => absent,
-	default  => 'file',
+        default  => 'file',
       },
       content => template('nginx/vhost/vhost_footer.erb'),
       notify => Class['nginx::service'],
     }
   }
+
 }
