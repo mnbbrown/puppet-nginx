@@ -32,6 +32,7 @@ class nginx::params {
   $nx_tcp_nopush         = on
   $nx_gzip               = on
   $nx_hash_max_size      = 2048
+  $nx_server_names_hash_bucket_size = 32
 
   $nx_proxy_redirect          = off
   $nx_proxy_set_header        = [
