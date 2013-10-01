@@ -30,8 +30,7 @@ define nginx::resource::location(
   $type        = 'directory',
   $upstream    = undef,
   $www_root    = undef,
-  $index_files = ['index.html', 'index.htm', 'index.php'],
-  $location
+  $index_files = ['index.html', 'index.htm', 'index.php']
 ) {
 
   if ($vhost == undef) {
