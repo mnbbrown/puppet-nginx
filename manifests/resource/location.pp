@@ -29,7 +29,8 @@ define nginx::resource::location(
   $vhost       = undef,
   $type        = 'directory',
   $upstream    = undef,
-  $www_root    = undef,
+  $root_dir    = undef,
+  $alias_dir   = undef,
   $index_files = ['index.html', 'index.htm', 'index.php']
 ) {
 
@@ -48,8 +49,11 @@ define nginx::resource::location(
     }
 
     directory: { 
-      if ($www_root == undef){
-        fail('Cannont create a directory location if www_root is not defined')
+      if ($root_dir != undef && $alias_dir != undef){
+        fail('Both root_dir and alias_dir cannot be defined at the same time')
+      }
+      if ($root_dir == undef && $alias_root == undef){
+        fail('Cannont create a directory location if root_dir OR alias_root is not defined.')
       }
       $ct = template('nginx/vhost/vhost_location_directory.erb') 
     }
