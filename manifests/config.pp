@@ -20,11 +20,19 @@ class nginx::config inherits nginx::params {
     mode  => '0644',
   }
 
-  file { "${nginx::params::nx_conf_dir}":
+  file { "${nginx::params::nx_conf_dir}" :
     ensure => directory,
   }
 
-  file { "${nginx::params::nx_conf_dir}/conf.d":
+  file { "${nginx::params::nx_conf_dir}/conf.d" :
+    ensure => directory,
+  }
+
+  file { "${nginx::params::nx_sites_available_dir}" : 
+    ensure => directory,
+  }
+
+  file { "${nginx::params::nx_sites_enabled_dir}" : 
     ensure => directory,
   }
 

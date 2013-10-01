@@ -75,16 +75,16 @@ define nginx::resource::vhost(
     }
   }
 
-  $vhost = "${nginx::config:nx_vhosts}/${name}.conf"
+  $vhost = "${nginx::config:nx_sites_available_dir}/${name}.conf"
 
-  concat { $vhost: 
-    user => 'www-data',
+  concat { $vhost : 
+    owner => 'www-data',
     group => 'www-data',
     mode => 0644,
   }
 
-  concat::fragment { "vhost_header":
-    target => $vhost
+  concat::fragment { "vhost_header" :
+    target => $vhost,
     content => template('nginx/vhost/vhost_header.erb'),    
     ensure  => $ensure ? {
       'absent' => absent,
@@ -93,7 +93,7 @@ define nginx::resource::vhost(
     order => 01
   }
 
-  concat::fragment { "vhost_footer": 
+  concat::fragment { "vhost_footer" : 
     target => $vhost,
     content => template('nginx/vhost/vhost_footer.erb'),
     ensure  => $ensure ? {
