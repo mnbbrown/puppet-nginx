@@ -34,12 +34,12 @@ define nginx::resource::location(
   $option      = undef,
   $location
 ) {
-  File {
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0644',
-    notify => Class['nginx::service'],
-  }
+  # File {
+  #   owner  => 'root',
+  #   group  => 'root',
+  #   mode   => '0644',
+  #   notify => Class['nginx::service'],
+  # }
 
   ## Shared Variables
   $ensure_real = $ensure ? {
@@ -66,16 +66,16 @@ define nginx::resource::location(
   }
 
   ## Create stubs for vHost File Fragment Pattern
-  file {"${nginx::config::nx_temp_dir}/nginx.d/${vhost}-500-${name}":
+  concat::fragment { "${nginx::config::nx_sites_available_dir}/${vhost}" :
     ensure  => $ensure_real,
     content => $content_real,
   }
 
   ## Only create SSL Specific locations if $ssl is true.
-  if ($ssl == 'true') {
-    file {"${nginx::config::nx_temp_dir}/nginx.d/${vhost}-800-${name}-ssl":
-      ensure  => $ensure_real,
-      content => $content_real,
-    }
-  }
+  # if ($ssl == 'true') {
+  #   file {"${nginx::config::nx_temp_dir}/nginx.d/${vhost}-800-${name}-ssl":
+  #     ensure  => $ensure_real,
+  #     content => $content_real,
+  #   }
+  # }
 }
