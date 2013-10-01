@@ -43,21 +43,21 @@ define nginx::resource::location(
       if ($upstream == undef){
         fail('Cannot create a proxy location if upstream is not defined')
       }
-      $content = template('vhost/vhost_location_proxy.erb') 
+      $ct = template('vhost/vhost_location_proxy.erb') 
     }
 
     directory: { 
       if ($www_root == undef){
         fail('Cannont create a directory location if www_root is not defined')
       }
-      $content = template('vhost/vhost_location_directory.erb') 
+      $ct = template('vhost/vhost_location_directory.erb') 
     }
 
     uwsgi: { 
       if ($upstream == undef){
         fail('Cannot create a uwsgi location if upstream is not defined')
       }
-      $content = template('vhost/vhost_location_uwsgi.erb') 
+      $ct = template('vhost/vhost_location_uwsgi.erb') 
     }
 
   }
@@ -65,7 +65,7 @@ define nginx::resource::location(
   ## Create stubs for vHost File Fragment Pattern
   concat::fragment { "${vhost}_${location}" :
     target => "${nginx::config::nx_sites_available_dir}/${vhost}.conf",
-    content => $content,
+    content => $ct,
     order => 50,
     notify => Class['nginx::service'],
   }
