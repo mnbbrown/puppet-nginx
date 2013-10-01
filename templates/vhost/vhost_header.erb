@@ -5,6 +5,7 @@ server {
   server_name <%= name %>;
   
   access_log  <%= scope.lookupvar('nginx::params::nx_log_dir')%>/<%= name %>.access.log;
+  error_log  <%= scope.lookupvar('nginx::params::nx_log_dir')%>/<%= name %>.error.log;
 
   root  <%= www_root %>;
   index <% index_files.each do |i| %> <%= i %> <% end %>;

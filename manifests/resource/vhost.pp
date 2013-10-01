@@ -49,16 +49,11 @@ define nginx::resource::vhost(
   $www_root         = "/srv/www/${name}"
 ) {
 
-  # File {
-  #   owner => 'root',
-  #   group => 'root',
-  #   mode  => '0644',
-  # }
-
+  # Ensure root directory exists and permissions are correct.
   file { $www_root:
     ensure => directory,
-    group => 'root',
-    owner => 'root',
+    group => 'www-data',
+    owner => 'www-data',
     mode => 0644
   }
 
@@ -75,6 +70,7 @@ define nginx::resource::vhost(
     }
   }
 
+  # Create vhost file using concat pattern.
   $vhost = "${nginx::config::nx_sites_available_dir}/${name}.conf"
 
   concat { $vhost : 
@@ -83,13 +79,18 @@ define nginx::resource::vhost(
     mode => 0644,
   }
 
+  # Add header to vhost file.
   concat::fragment { "vhost_header" :
     target => $vhost,
-    content => template('nginx/vhost/vhost_header.erb'),    
+    content => $ssl ? { # If SSL is enabled use SSL header and redirect all unsecured traffic to SSL.
+      'true' => template('nginx/vhost/vhost_ssl_header.erb'),
+      default => template('nginx/vhost/vhost_header.erb'),    
+    },
     ensure  => 'present',
     order => 01
   }
 
+  # Add footer to vhost file.
   concat::fragment { "vhost_footer" : 
     target => $vhost,
     content => template('nginx/vhost/vhost_footer.erb'),
@@ -97,6 +98,8 @@ define nginx::resource::vhost(
     order => 999
   }
 
+
+  # If enabled create symlink to sites-enabled. If not, ensure symlink does not exist.
   file { "${nginx::config::nx_sites_enabled_dir}/${name}.conf":
     ensure => $ensure ? {
       'enabled' => link,
@@ -104,27 +107,5 @@ define nginx::resource::vhost(
     },
     target => $vhost,
   }
-
-  # # Create SSL File Stubs if SSL is enabled
-  # if ($ssl == 'true') {
-
-  #   file { "${nginx::config::nx_temp_dir}/nginx.d/${name}-700-ssl":
-  #     ensure => $ensure ? {
-  #       'absent' => absent,
-  #       default  => 'file',
-  #     },
-  #     content => template('nginx/vhost/vhost_ssl_header.erb'),
-  #     notify => Class['nginx::service'],
-  #   }
-
-  #   file { "${nginx::config::nx_temp_dir}/nginx.d/${name}-999-ssl":
-  #     ensure => $ensure ? {
-  #       'absent' => absent,
-  #       default  => 'file',
-  #     },
-  #     content => template('nginx/vhost/vhost_footer.erb'),
-  #     notify => Class['nginx::service'],
-  #   }
-  # }
 
 }

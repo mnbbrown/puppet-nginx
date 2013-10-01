@@ -27,49 +27,48 @@
 define nginx::resource::location(
   $ensure      = present,
   $vhost       = undef,
+  $type        = 'directory',
+  $upstream    = undef,
   $www_root    = undef,
   $index_files = ['index.html', 'index.htm', 'index.php'],
-  $proxy       = undef,
-  $ssl         = false,
-  $option      = undef,
   $location
 ) {
-  # File {
-  #   owner  => 'root',
-  #   group  => 'root',
-  #   mode   => '0644',
-  #   notify => Class['nginx::service'],
-  # }
 
-  ## Shared Variables
-  $ensure_real = $ensure ? {
-    'absent' => absent,
-    default  => file,
-  }
-
-  # Use proxy template if $proxy is defined, otherwise use directory template.
-  if ($proxy != undef) {
-    $content_real = template('nginx/vhost/vhost_location_proxy.erb')
-  } else {
-    $content_real = template('nginx/vhost/vhost_location_directory.erb')
-  }
-
-  ## Check for various error condtiions
   if ($vhost == undef) {
     fail('Cannot create a location reference without attaching to a virtual host')
   }
-  if (($www_root == undef) and ($proxy == undef)) {
-    fail('Cannot create a location reference without a www_root or proxy defined')
-  }
-  if (($www_root != undef) and ($proxy != undef)) {
-    fail('Cannot define both directory and proxy in a virtual host')
+
+  case $type {
+
+    proxy: { 
+      if ($upstream == undef){
+        fail('Cannot create a proxy location if upstream is not defined')
+      }
+      $content = template('nginx/vhost/vhost_location_proxy.erb') 
+    }
+
+    directory: { 
+      if ($www_root == undef){
+        fail('Cannont create a directory location if www_root is not defined')
+      }
+      $content = template('nginx/vhost/vhost_location_directory.erb') 
+    }
+
+    uwsgi: { 
+      if ($upstream == undef){
+        fail('Cannot create a uwsgi location if upstream is not defined')
+      }
+      $content = template('nginx/vhost/vhost_location_uwsgi.erb') 
+    }
+
   }
 
   ## Create stubs for vHost File Fragment Pattern
   concat::fragment { "${vhost}_${location}" :
     target => "${nginx::config::nx_sites_available_dir}/${vhost}.conf",
-    ensure  => $ensure_real,
-    content => $content_real,
+    content => $content,
+    order => 50,
+    notify => Class['nginx::service'],
   }
 
   ## Only create SSL Specific locations if $ssl is true.
