@@ -33,6 +33,7 @@ define nginx::resource::location(
   $index_files = ['index.html', 'index.htm', 'index.php']
 ) {
 
+  # Check if the location's vhost has been defined. If not, fail.
   if ($vhost == undef) {
     fail('Cannot create a location reference without attaching to a virtual host')
   }
@@ -70,11 +71,4 @@ define nginx::resource::location(
     notify => Class['nginx::service'],
   }
 
-  ## Only create SSL Specific locations if $ssl is true.
-  # if ($ssl == 'true') {
-  #   file {"${nginx::config::nx_temp_dir}/nginx.d/${vhost}-800-${name}-ssl":
-  #     ensure  => $ensure_real,
-  #     content => $content_real,
-  #   }
-  # }
 }

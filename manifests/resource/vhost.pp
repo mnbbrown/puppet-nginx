@@ -77,6 +77,7 @@ define nginx::resource::vhost(
     owner => 'www-data',
     group => 'www-data',
     mode => 0644,
+    notify   => Class['nginx::service'],
   }
 
   # Add header to vhost file.

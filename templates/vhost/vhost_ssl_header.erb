@@ -1,4 +1,10 @@
 server {
+    listen      80;
+    server_name <%= name %>;
+    return     301   https://$server_name$request_uri;
+}
+
+server {
   listen       443;
   <% if ipv6_enable == 'true' && (defined? ipaddress6) %>listen [<%= ipv6_listen_ip %>]:<%= ipv6_listen_port %> default ipv6only=on;<% end %>
   server_name  <%= name %>;

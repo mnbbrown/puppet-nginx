@@ -1,6 +1,6 @@
 
   location <%= name %> {
-    uwsgi_params <%= upstream %>;
+    uwsgi_pass <%= upstream %>;
     include uwsgi_params;
   }
 
