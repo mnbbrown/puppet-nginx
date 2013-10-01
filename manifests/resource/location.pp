@@ -43,21 +43,21 @@ define nginx::resource::location(
       if ($upstream == undef){
         fail('Cannot create a proxy location if upstream is not defined')
       }
-      $ct = template('templates/vhost/vhost_location_proxy.erb') 
+      $ct = template('nginx/vhost/vhost_location_proxy.erb') 
     }
 
     directory: { 
       if ($www_root == undef){
         fail('Cannont create a directory location if www_root is not defined')
       }
-      $ct = template('templates/vhost/vhost_location_directory.erb') 
+      $ct = template('nginx/vhost/vhost_location_directory.erb') 
     }
 
     uwsgi: { 
       if ($upstream == undef){
         fail('Cannot create a uwsgi location if upstream is not defined')
       }
-      $ct = template('templates/vhost/vhost_location_uwsgi.erb') 
+      $ct = template('nginx/vhost/vhost_location_uwsgi.erb') 
     }
 
   }
