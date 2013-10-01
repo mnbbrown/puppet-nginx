@@ -31,7 +31,7 @@
 #    ssl_key  => '/tmp/server.pem',
 #  }
 define nginx::resource::vhost(
-  $ensure           = 'enable',
+  $ensure           = undef,
   $listen_ip        = '*',
   $listen_port      = '80',
 
@@ -86,21 +86,23 @@ define nginx::resource::vhost(
   concat::fragment { "vhost_header" :
     target => $vhost,
     content => template('nginx/vhost/vhost_header.erb'),    
-    ensure  => $ensure ? {
-      'absent' => absent,
-      default  => 'file',
-    },
+    ensure  => 'present',
     order => 01
   }
 
   concat::fragment { "vhost_footer" : 
     target => $vhost,
     content => template('nginx/vhost/vhost_footer.erb'),
-    ensure  => $ensure ? {
-      'absent' => absent,
-      default  => 'file',
-    },
+    ensure  => 'present',
     order => 999
+  }
+
+  file { "${nginx::config::nx_sites_enabled_dir}/${name}.conf":
+    ensure => $ensure ? {
+      'enabled' => link,
+      default  => absent,
+    },
+    target => $vhost,
   }
 
   # # Create SSL File Stubs if SSL is enabled
