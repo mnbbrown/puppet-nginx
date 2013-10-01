@@ -75,7 +75,7 @@ define nginx::resource::vhost(
     }
   }
 
-  $vhost = "${nginx::config:nx_sites_available_dir}/${name}.conf"
+  $vhost = "${nginx::config::nx_sites_available_dir}/${name}.conf"
 
   concat { $vhost : 
     owner => 'www-data',
