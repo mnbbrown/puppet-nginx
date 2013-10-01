@@ -20,8 +20,8 @@ class nginx::params {
   $nx_pid = '/var/run/nginx.pid'
   $nx_conf_dir = '/etc/nginx'
   $nx_log_dir = '/var/log/nginx'
-  $nx_sites_available_dir = '${nx_conf_dir}/sites-available'
-  $nx_sites_enabled_dir = '${nx_conf_dir}/sites-enabled'
+  $nx_sites_available_dir = "${nx_conf_dir}/sites-available"
+  $nx_sites_enabled_dir = "${nx_conf_dir}/sites-enabled"
 
   $nx_worker_processes   = 1
   $nx_worker_connections = 1024
