@@ -67,7 +67,7 @@ define nginx::resource::location(
 
   ## Create stubs for vHost File Fragment Pattern
   concat::fragment { "${vhost}_${location}" :
-    target => "${nginx::config::nx_sites_available_dir}/${vhost}",
+    target => "${nginx::config::nx_sites_available_dir}/${vhost}.conf",
     ensure  => $ensure_real,
     content => $content_real,
   }
