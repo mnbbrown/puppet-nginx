@@ -31,7 +31,7 @@
 #    ssl_key  => '/tmp/server.pem',
 #  }
 define nginx::resource::vhost(
-  $ensure           = undef,
+  $ensure           = 'absent',
   $listen_ip        = '*',
   $listen_port      = '80',
 
