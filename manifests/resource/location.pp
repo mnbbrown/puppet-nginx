@@ -52,8 +52,8 @@ define nginx::resource::location(
       if ($root_dir != undef and $alias_dir != undef){
         fail('Both root_dir and alias_dir cannot be defined at the same time')
       }
-      if ($root_dir == undef and $alias_root == undef){
-        fail('Cannont create a directory location if root_dir OR alias_root is not defined.')
+      if ($root_dir == undef and $alias_dir == undef){
+        fail('Cannont create a directory location if root_dir OR alias_dir is not defined.')
       }
       $ct = template('nginx/vhost/vhost_location_directory.erb') 
     }
