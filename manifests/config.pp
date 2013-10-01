@@ -30,10 +30,14 @@ class nginx::config inherits nginx::params {
 
   file { "${nginx::params::nx_sites_available_dir}" : 
     ensure => directory,
+    recurse => true,
+    purge   => true,
   }
 
   file { "${nginx::params::nx_sites_enabled_dir}" : 
     ensure => directory,
+    recurse => true,
+    purge   => true,
   }
 
   file { "${nginx::config::nx_run_dir}":
