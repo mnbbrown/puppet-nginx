@@ -1,6 +1,6 @@
 
   location <%= name %> {
-    <% if defined? root_dir %>root <%= root_dir %>;<% end %>
-    <% if defined? alias_dir %>alias <%= alias_dir %>;<% end %>
+    <% if root_dir %>root <%= root_dir %>;<% end %>
+    <% if alias_dir %>alias <%= alias_dir %>;<% end %>
     index <% index_files.each do |i| %> <%= i %> <% end %>; 
   }
