@@ -91,6 +91,13 @@ define nginx::resource::vhost(
     order => 01
   }
 
+  concat::fragment { "vhost_location_ignore" :
+    target => $vhost,
+    content => template('nginx/vhost/vhost_location_ignore.erb'),
+    ensure => 'present',
+    order => 998
+  }
+
   # Add footer to vhost file.
   concat::fragment { "vhost_footer" : 
     target => $vhost,
