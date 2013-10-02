@@ -44,8 +44,8 @@ http {
   server {
     listen 443 default_server;
     ssl on;
-    ssl_certificate      /etc/ssl/certs/ssl-cert-snakeoil.pem;
-    ssl_certificate_key  /etc/ssl/private/ssl-cert-snakeoil.key;
+    ssl_certificate      /srv/certs/default/matthewbrown.io.default.chain.pem;
+    ssl_certificate_key  /srv/certs/default/matthewbrown.io.default.key;
     return 444;
   }
 
